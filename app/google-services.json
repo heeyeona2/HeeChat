@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "910149117795",
+    "project_id": "mychattingapp-d6cf5",
+    "storage_bucket": "mychattingapp-d6cf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910149117795:android:8bdac74f738b8f23c2d556",
+        "android_client_info": {
+          "package_name": "com.github.h01d.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "910149117795-48h3f16141ao61toptbfn10g9b9a65n2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPXc1QRmmxpcGGkQWM_L6fD6AipY8g5eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "910149117795-48h3f16141ao61toptbfn10g9b9a65n2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910149117795:android:135d89304fe79debc2d556",
+        "android_client_info": {
+          "package_name": "com.heeyeon.mymsgapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "910149117795-48h3f16141ao61toptbfn10g9b9a65n2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPXc1QRmmxpcGGkQWM_L6fD6AipY8g5eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "910149117795-48h3f16141ao61toptbfn10g9b9a65n2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
