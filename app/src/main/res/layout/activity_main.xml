@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tool_bar_Main"
+            android:id="@+id/tool_bar_main"
             android:background="@color/colorPrimaryDark"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/MenuStyle"
@@ -31,7 +31,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </androidx.appcompat.widget.Toolbar>
-        <com.google.android.material.tabs.TabLayout
+
+    <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:background="@color/colorPrimaryDark"
             app:tabSelectedTextColor="#fff"
@@ -41,8 +42,9 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/tab_view_id"
+        android:id="@+id/view_pager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
