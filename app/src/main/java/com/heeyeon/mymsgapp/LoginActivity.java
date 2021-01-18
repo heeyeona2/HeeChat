@@ -1,24 +1,31 @@
 package com.heeyeon.mymsgapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthSettings;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
     MaterialEditText email, password;
     Button btn_login;
 
-    FirebaseAuth auth;
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("로그인");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        auth = FirebaseAuth.getInstance();
+        firebaseAuth= FirebaseAuth.getInstance();
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -39,15 +46,21 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                String txt_email = email.getText().toString();
-                String txt_password = password.getText().toString();
-
-                if(TextUtils.isEmpty(txt_email)||TextUtils.isEmpty(txt_password)) {
-                    Toast.makeText(LoginActivity.this, "빈칸을 모두 채워주세요", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(LoginActivity.this,"Authententication failed!",Toast.LENGTH_SHORT).show();
-                }
+                firebaseAuth.signInWithEmailAndPassword(
+                        Objects.requireNonNull(email.getText(), "Fields should not be empty").toString(),
+                        Objects.requireNonNull(password.getText(), "Fields should not be empty ").toString()).
+                        addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                } else
+                                    Toast.makeText(LoginActivity.this, "Email or password is incorrect ", Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
 
