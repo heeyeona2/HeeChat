@@ -12,8 +12,8 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:id="@+id/profile_picture"
         android:layout_below="@id/toolbar"
         android:layout_centerHorizontal="true"
@@ -29,5 +29,5 @@
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         android:id="@+id/username"
-        android:textSize="18sp"/>
+        android:textSize="28sp"/>
 </RelativeLayout>

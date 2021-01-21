@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".MainActivity">
+    android:background="@color/grayBackground"
+    tools:context=".MainActivity"
+    >
+
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        >
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar_main"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/white"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:titleTextColor="@color/darkgray"
             app:popupTheme="@style/MenuStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -26,18 +35,24 @@
                 android:layout_marginStart="25dp"
                 android:text=""
                 android:textStyle="bold"
-                android:textColor="#fff"
+                android:textColor="@color/darkgray"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="bottom"
+                android:layout_marginStart="20dp"
+                android:background="@mipmap/editicon"/>
         </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
-            android:background="@color/colorPrimaryDark"
-            app:tabSelectedTextColor="#fff"
-            app:tabIndicatorColor="#fff"
-            app:tabTextColor="#fff"
+            android:background="@color/white"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorPrimaryDark"
+            app:tabTextColor="@color/darkgray"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.appbar.AppBarLayout>

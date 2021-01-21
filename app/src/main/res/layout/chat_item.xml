@@ -9,6 +9,12 @@
     android:elevation="8dp"
     android:padding="10dp">
 
+    <View
+        android:id="@+id/view1"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        />
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -23,7 +29,7 @@
         android:id="@+id/username_item"
         android:layout_toEndOf="@id/profile_picture_item"
         android:layout_marginLeft="10dp"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp"
         android:textSize="16sp"/>
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="15dp"
@@ -63,6 +69,11 @@
         android:layout_marginLeft="20dp"
         android:maxLines="1"/>
 
-
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/profile_picture_item"
+        />
 
 </RelativeLayout>

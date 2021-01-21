@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.heeyeon.mymsgapp.Adapter.ChatAdapter;
 import com.heeyeon.mymsgapp.Adapter.UserAdapter;
 import com.heeyeon.mymsgapp.Model.Chat;
 import com.heeyeon.mymsgapp.Model.Chatlist;
@@ -35,7 +36,7 @@ public class ChatFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-    private UserAdapter userAdapter;
+    private ChatAdapter chatAdapter;
     private ArrayList<User> mUser;
 
     FirebaseUser firebaseUser;
@@ -99,8 +100,8 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 }
-                userAdapter = new UserAdapter(getContext(), mUser,true);
-                recyclerView.setAdapter(userAdapter);
+                chatAdapter = new ChatAdapter(getContext(), mUser,true);
+                recyclerView.setAdapter(chatAdapter);
             }
 
             @Override

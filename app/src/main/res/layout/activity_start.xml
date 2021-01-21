@@ -16,15 +16,18 @@
         android:textSize="25sp"
         android:textStyle="bold"/>
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
         android:id="@+id/login"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/custom_button1"
         android:text="login"/>
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
+        android:background="@drawable/custom_button1"
         android:id="@+id/register"
+        android:layout_marginTop="20dp"
         android:text="register"/>
 
 </LinearLayout>

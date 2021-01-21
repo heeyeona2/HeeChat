@@ -76,7 +76,8 @@ public class ProfileActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
                 if(user.getImageURL().equals("default")){
-                    profile.setImageResource(R.mipmap.default_profile);
+                    profile.setImageResource(R.mipmap.profile_main);
+                    profile.setAlpha(0.84f);
                 } else{
                     Glide.with(ProfileActivity.this).load(user.getImageURL()).into(profile);
                 }
