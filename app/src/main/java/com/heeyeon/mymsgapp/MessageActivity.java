@@ -2,21 +2,39 @@ package com.heeyeon.mymsgapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,8 +43,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.heeyeon.mymsgapp.Adapter.BoxAdapter;
+import com.heeyeon.mymsgapp.Adapter.CardAdapter;
 import com.heeyeon.mymsgapp.Adapter.MessageAdapter;
 import com.heeyeon.mymsgapp.Fragments.APIService;
+import com.heeyeon.mymsgapp.Model.Box;
+import com.heeyeon.mymsgapp.Model.Card;
 import com.heeyeon.mymsgapp.Model.Chat;
 import com.heeyeon.mymsgapp.Model.User;
 import com.heeyeon.mymsgapp.Notification.Client;
@@ -35,6 +57,7 @@ import com.heeyeon.mymsgapp.Notification.MyResponse;
 import com.heeyeon.mymsgapp.Notification.Sender;
 import com.heeyeon.mymsgapp.Notification.Token;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,9 +65,30 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.speech.tts.TextToSpeech;
+
+import org.honorato.multistatetogglebutton.MultiStateToggleButton;
+import org.honorato.multistatetogglebutton.ToggleButton;
 
 public class MessageActivity extends AppCompatActivity {
 
+    public static Context mContext;
+    static String[] Backgroundlist = new String[]{"burst.json","golden_particle.json","night_background.json","mountain.json","pink_gradient.json","sunrise.json"};
+    static String[] Emojilist = new String[]{"emoji_enamorado.json","emoji_guino.json","emoji_sorprendido.json","emoji_triste.json","email.json","coffee.json","heart_beat.json","thumbup.json"};
+    static HashMap<Integer, Integer> BoxAnim = new HashMap<Integer, Integer>(){
+        {
+            put(0,R.anim.fadein);
+            put(1,R.anim.fadeout);
+            put(2,R.anim.blink);
+            put(3,R.anim.bounce);
+            put(4,R.anim.zoomin);
+            put(5,R.anim.zoomout);
+            put(6,R.anim.slide_down);
+            put(7,R.anim.move);
+            put(8,R.anim.rotate);
+
+        }
+    };
     CircleImageView profile_image;
     TextView username;
     String userid;
@@ -56,19 +100,55 @@ public class MessageActivity extends AppCompatActivity {
 
     ImageButton btn_send;
     EditText text_send;
-    
+
     MessageAdapter messageAdapter;
     ArrayList<Chat> mChat;
 
     RecyclerView recyclerView;
+    RecyclerView recyclerCardView1,recyclerCardView2,BoxRecyclerView;
+    CardAdapter cardAdapter,cardAdapter2;
+    BoxAdapter boxAdapter;
+    ArrayList<Card> mCard,mCard2;
+    ArrayList<Box> BoxCard;
+
 
     Intent intent;
     ValueEventListener valueEventListener;
+    FrameLayout effectBackground,lottieBackground;
 
+    private Animation fab_open, fab_close;
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fab, fab1, fab2;
+    LottieAnimationView lottieAnimationView;
+
+    MultiStateToggleButton effectTog;
+    RelativeLayout OptionsBar;
+    Card selectedEffectCard, selectedBackCard;
+    Box selectedBox;
+    CardView selectedEffectCardView, selectedBackCardView, selectedBoxCardView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        mContext = this;
+
+        OptionsBar = findViewById(R.id.OptionsBar); //효과 창
+        OptionsBar.setVisibility(View.INVISIBLE);
+
+        effectTog = findViewById(R.id.effect_tog); // 단순효과들
+        effectTog.setOnValueChangedListener(new ToggleButton.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                if(value==0){
+                    recyclerCardView1.setVisibility(View.VISIBLE);//이모지들
+                    recyclerCardView2.setVisibility(View.INVISIBLE);
+                } else {
+                    recyclerCardView1.setVisibility(View.INVISIBLE); // 백그라운드들
+                    recyclerCardView2.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.tool_bar_msg);
         setSupportActionBar(toolbar);
@@ -80,21 +160,55 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
+
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        recyclerCardView1 = findViewById(R.id.cardrecycle1);
+        recyclerCardView1.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager2.setOrientation(RecyclerView.HORIZONTAL);
+        recyclerCardView1.setLayoutManager(linearLayoutManager2);
+
+        recyclerCardView2 = findViewById(R.id.cardrecycle2);
+        recyclerCardView2.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager3.setOrientation(RecyclerView.HORIZONTAL);
+        recyclerCardView2.setLayoutManager(linearLayoutManager3);
+
+        BoxRecyclerView = findViewById(R.id.boxcardrecycle);
+        BoxRecyclerView .setHasFixedSize(true);
+        LinearLayoutManager boxlinearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        boxlinearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        BoxRecyclerView .setLayoutManager(boxlinearLayoutManager);
+        lottieBackground = findViewById(R.id.lottiebackgroubd);
+
         profile_image = findViewById(R.id.profile_picture);
         username = findViewById(R.id.username_msg);
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
 
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        lottieAnimationView = (LottieAnimationView) findViewById(R.id.lottie);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+
+        fab.setOnClickListener(btnClickListener);
+        fab1.setOnClickListener(btnClickListener);
+        fab2.setOnClickListener(btnClickListener);
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        effectBackground = findViewById(R.id.effectbackground);
+        effectBackground.setVisibility(View.INVISIBLE);
+        //backgroundEffect();
 
         btn_send.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -130,6 +244,97 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
         seenMessage(userid);
+        setCard1();
+    }
+
+    public void selectEffectCard(Card card, CardView cardView){
+        this.selectedEffectCard = card;
+        if(selectedEffectCardView!=null){//전에 선택되었던 것
+            selectedEffectCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
+        }
+        if(card.getImage()!=0) lottieanim(card.getFlag(),card.getImage()-1);
+        selectedEffectCardView = cardView;
+        if(selectedBackCardView!=null) selectedBackCard.setImage(-1);
+        selectedEffectCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
+    }
+
+    public void setSelectedBackCard(Card card,CardView cardView){
+        this.selectedBackCard = card;
+        if(selectedBackCardView!=null){//전에 선택되었던 것
+            selectedBackCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
+        }
+        if(card.getImage()!=0)  lottieanim(card.getFlag(),card.getImage()-1);
+
+        selectedBackCardView = cardView;
+        if(selectedEffectCard!=null) selectedEffectCard.setImage(0);
+        selectedBackCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
+     }
+
+    public void setSelectedBoxCard(Box box, CardView cardView){
+        this.selectedBox = box;
+        int id = box.getId();
+        if(selectedBoxCardView!=null){//전에 선택되었던 것
+            selectedBoxCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
+        }
+        selectedBoxCardView = cardView;
+        selectedBoxCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
+
+    }
+    public void boxanim(int id, RelativeLayout total){
+        if(id!=-1) {
+            Animation animation= AnimationUtils.loadAnimation(MessageActivity.this, BoxAnim.get(id));
+            total.startAnimation(animation);
+        }
+    }
+    public void boxanim(int id, TextView total){
+        if(id!=-1) {
+            Animation animation= AnimationUtils.loadAnimation(MessageActivity.this, BoxAnim.get(id));
+            total.startAnimation(animation);
+        }
+    }
+    public void lottieanim(boolean flag, int order) {
+        if(order==-1){
+            lottieBackground.setVisibility(View.INVISIBLE);
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            return;
+        }
+        lottieBackground.setVisibility(View.VISIBLE);
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        if(flag){
+
+                lottieAnimationView.setAnimation(Emojilist[order]);
+
+        } else {
+
+                lottieAnimationView.setAnimation(Backgroundlist[order]);
+        }
+        lottieAnimationView.setRepeatCount(1);
+        lottieAnimationView.playAnimation();
+    }
+
+
+    private void backgroundEffect(){//백그라운드 그라이데이션 커스텀
+        Handler mHandler = new Handler();
+        effectBackground.setVisibility(View.VISIBLE);
+
+        Runnable mMyTask = new Runnable() {
+            @Override
+            public void run() {
+                // 실제 동작
+                effectBackground.setVisibility(View.INVISIBLE);
+
+            }
+        };
+
+        mHandler.postDelayed(mMyTask, 5000); // 5초후에 실행
+
+        AnimationDrawable animDrawable =  (AnimationDrawable) effectBackground.getBackground();
+        animDrawable.setEnterFadeDuration(10);
+        animDrawable.setExitFadeDuration(1200);
+        animDrawable.setTint(getColor(R.color.colorPrimary));
+        animDrawable.setTintMode(PorterDuff.Mode.OVERLAY);
+        animDrawable.setOneShot(true);
+        animDrawable.start();
     }
     private void seenMessage(final String userid){
         databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -145,13 +350,13 @@ public class MessageActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
+
     private void sendMessage(String sender, String receiver, String message){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -160,6 +365,14 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
         hashMap.put("isseen",false);
+        if(selectedEffectCard==null) hashMap.put("effect",-1);
+        else  hashMap.put("effect",selectedEffectCard.getImage()-1);
+
+        if(selectedBackCard==null) hashMap.put("backeffect",-1);
+        else  hashMap.put("backeffect",selectedBackCard.getImage()-1);
+
+        if(selectedBox==null) hashMap.put("boxeffect",-1);
+        else hashMap.put("boxeffect",selectedBox.getId());
 
         databaseReference.child("Chats").push().setValue(hashMap);
 
@@ -215,7 +428,7 @@ public class MessageActivity extends AppCompatActivity {
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if(response.code()==200){
                                         if(response.body().success ==1){
-                                            Toast.makeText(MessageActivity.this, "Failed!",Toast.LENGTH_SHORT).show();
+                                         //   Toast.makeText(MessageActivity.this, "Failed!",Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }
@@ -233,6 +446,47 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setCard1(){
+        mCard = new ArrayList<>();
+        mCard.add(new Card(true,0));
+        mCard.add(new Card(true,1));
+        mCard.add(new Card(true,2));
+        mCard.add(new Card(true,3));
+        mCard.add(new Card(true,4));
+        mCard.add(new Card(true,5));
+        mCard.add(new Card(true,6));
+        mCard.add(new Card(true,7));
+        mCard.add(new Card(true,8));
+        mCard2 = new ArrayList<>();
+        mCard2.add(new Card(false,0));
+        mCard2.add(new Card(false,1));
+        mCard2.add(new Card(false,2));
+        mCard2.add(new Card(false,3));
+        mCard2.add(new Card(false,4));
+        mCard2.add(new Card(false,5));
+        mCard2.add(new Card(false,6));
+
+        cardAdapter = new CardAdapter(MessageActivity.this, mCard);
+        recyclerCardView1.setAdapter(cardAdapter);
+        cardAdapter2 = new CardAdapter(MessageActivity.this, mCard2);
+        recyclerCardView2.setAdapter(cardAdapter2);
+
+        BoxCard = new ArrayList<>();
+        BoxCard.add(new Box("None",-1));
+        BoxCard.add(new Box("Fade In",0));
+        BoxCard.add(new Box("Fade Out",1));
+        BoxCard.add(new Box("Blink",2));
+        BoxCard.add(new Box("Bounce",3));
+        BoxCard.add(new Box("Zoom In",4));
+        BoxCard.add(new Box("Zoom Out",5));
+        BoxCard.add(new Box("Slide down",6));
+        BoxCard.add(new Box("Move",7));
+        BoxCard.add(new Box("Rotate",8));
+
+        boxAdapter = new BoxAdapter(MessageActivity.this, BoxCard);
+        BoxRecyclerView.setAdapter(boxAdapter);
     }
 
 
@@ -253,6 +507,14 @@ public class MessageActivity extends AppCompatActivity {
                     messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageurl);
                     recyclerView.setAdapter(messageAdapter);
                 }
+                if(mChat.size()>0) {
+                    int effect = mChat.get(mChat.size() - 1).getEffect();
+                    int backeffect = mChat.get(mChat.size() - 1).getBackeffect();
+                    int boxeffect = mChat.get(mChat.size() - 1).getBoxeffect();
+                    if (effect != -1) lottieanim(true, effect );
+                    if (backeffect != -1) lottieanim(false, backeffect );
+                }
+
             }
 
             @Override
@@ -268,6 +530,72 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("status", status);
 
         databaseReference.updateChildren(hashMap);
+    }
+    private Button.OnClickListener btnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.fab:
+                    anim();
+
+                    break;
+                case R.id.fab1:
+                    //anim();
+                    effectTog.setVisibility(View.INVISIBLE);
+
+                    BoxRecyclerView.setVisibility(View.VISIBLE);
+                    recyclerCardView1.setVisibility(View.INVISIBLE);
+                    recyclerCardView2.setVisibility(View.INVISIBLE);
+                    lottieBackground.setVisibility(View.INVISIBLE);
+
+                    break;
+                case R.id.fab2:
+                    //anim();
+                    lottieBackground.setVisibility(View.VISIBLE);
+                    recyclerCardView1.setVisibility(View.VISIBLE);
+                    recyclerCardView2.setVisibility(View.INVISIBLE);
+                    effectTog.setVisibility(View.VISIBLE);
+                    BoxRecyclerView.setVisibility(View.INVISIBLE);
+
+                    effectTog.setValue(0);
+
+
+                    break;
+            }
+        }
+    };
+
+    public void anim() {
+
+        if (isFabOpen) {
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            isFabOpen = false;
+            fab.setImageResource(R.drawable.magic_wand);
+            OptionsBar.setVisibility(View.INVISIBLE);
+            BoxRecyclerView.setVisibility(View.INVISIBLE);
+            lottieBackground.setVisibility(View.INVISIBLE);
+
+        } else {
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            isFabOpen = true;
+            fab.setImageResource(R.drawable.x);
+
+            OptionsBar.setVisibility(View.VISIBLE);
+
+            effectTog.setVisibility(View.VISIBLE);
+            recyclerCardView1.setVisibility(View.VISIBLE);
+            recyclerCardView2.setVisibility(View.INVISIBLE);
+            BoxRecyclerView.setVisibility(View.INVISIBLE);
+            lottieBackground.setVisibility(View.VISIBLE);
+
+            effectTog.setValue(0);
+        }
     }
 
     @Override

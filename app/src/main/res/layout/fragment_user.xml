@@ -14,6 +14,7 @@
         android:autofillHints="Search ..." />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="16dp"
         android:id="@+id/users_list_fragment"
         android:layout_below="@+id/search_user"
         android:layout_width="match_parent"

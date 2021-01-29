@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,7 +64,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         } else {
             Glide.with(mContext).load(imageurl).into(holder.profile_image);
         }
+        holder.show_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int effect = chat.getEffect();
+                int backeffect = chat.getBackeffect();
+                int boxeffect = chat.getBoxeffect();
+                if(backeffect==-1) ((MessageActivity) MessageActivity.mContext).lottieanim(true,effect);
+                else if(effect==-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false,backeffect);
 
+                ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total);
+
+            }
+        });
         if(position == mChat.size()-1){
             if(chat.isIsseen()){
                 holder.txt_seen.setText("읽음");
@@ -85,12 +98,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public TextView show_message;
         public ImageView profile_image;
         public TextView txt_seen;
+        public RelativeLayout total;
 
     public ViewHolder(@NonNull  View itemView){
             super(itemView);
             show_message = itemView.findViewById(R.id.show_msg);
             profile_image=itemView.findViewById(R.id.profile_picture);
             txt_seen = itemView.findViewById(R.id.txt_seen);
+            total = itemView.findViewById(R.id.total);
         }
     }
 

@@ -65,7 +65,6 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar(), "No tool bar found").setTitle("프로필");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);// used to return back to parent activity which can be assigned in manif
-
         storageReference = FirebaseStorage.getInstance().getReference("Uploads");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
@@ -79,7 +78,12 @@ public class ProfileActivity extends AppCompatActivity {
                     profile.setImageResource(R.mipmap.profile_main);
                     profile.setAlpha(0.84f);
                 } else{
-                    Glide.with(ProfileActivity.this).load(user.getImageURL()).into(profile);
+                    try{
+                        Glide.with(ProfileActivity.this).load(user.getImageURL()).into(profile);
+                    }
+                    catch (IllegalArgumentException i){
+                        Toast.makeText(getApplicationContext(),"다시 업로드 해주세요",Toast.LENGTH_SHORT);
+                    }
                 }
             }
 

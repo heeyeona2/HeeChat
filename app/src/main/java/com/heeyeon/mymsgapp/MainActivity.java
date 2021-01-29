@@ -60,11 +60,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
+                if(user==null){
+                    Intent intent = new Intent(getApplicationContext(),StartActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
                 username.setText(user.getUsername());
-                if(user.getImageURL().equals("default")){
-                    profile_image.setImageResource(R.mipmap.default_profile);
-                } else {
-                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
+                try {
+                    if (user.getImageURL().equals("default")) {
+                        profile_image.setImageResource(R.mipmap.default_profile);
+                    } else {
+                        Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
+                    }
+                }
+                catch (NullPointerException e){
+                    Intent intent = new Intent(getApplicationContext(),StartActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
 

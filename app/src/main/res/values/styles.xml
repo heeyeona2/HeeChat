@@ -5,11 +5,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="android:fontFamily">@font/nanumsquarer</item>
+        <item name="android:itemBackground">@color/colorPrimary</item>
     </style>
     <!--another style  -->
     <style name="MenuStyle" parent="Theme.AppCompat.Light">
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:fontFamily">@font/nanumsquarer</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="ToolbarColoredBackArrow" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
 
 </resources>

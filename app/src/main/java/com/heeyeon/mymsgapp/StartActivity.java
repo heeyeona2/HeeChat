@@ -18,7 +18,7 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUser =FirebaseAuth.getInstance().getCurrentUser();
 
         //유저 null ?
         if(firebaseUser != null){

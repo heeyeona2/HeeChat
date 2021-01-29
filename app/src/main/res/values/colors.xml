@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#00AAD4</color>
     <color name="colorPrimaryDark">#008AD4</color>
-    <color name="colorAccent">#FC8686</color>
+    <color name="colorAccent">#FFFFFF</color>
     <color name="grayBackground">#F3F3F3</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="smallicon">#FF9800</color>
@@ -12,4 +12,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="status_off">#878787</color>
     <color name="darkgray">#2B2B2B</color>
+    <color name="colorTransparent">#00ffffff</color>
+    <color name="transGray">#832B2B2B</color>
+    <color name="colorGradientStart">#D9FF43</color>
+    <color name="colorGradientCenter">#F67831</color>
+    <color name="colorGradientEnd">#FF1493</color>
 </resources>

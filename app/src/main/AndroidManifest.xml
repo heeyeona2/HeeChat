@@ -23,7 +23,7 @@
         <activity
             android:name=".ProfileActivity"
             android:parentActivityName=".StartActivity" />
-        <activity android:name=".MessageActivity" />
+        <activity android:name=".MessageActivity" android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".StartActivity"/>
         <activity
             android:name=".LoginActivity"
