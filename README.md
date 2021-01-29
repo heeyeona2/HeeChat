@@ -1,6 +1,6 @@
 #HeeChat : Messaging App you can customize the design of your chat room.
  
- * 계정관리
+* 계정관리
   - 메일 회원가입
   - 로그인
   - 자동로그인
