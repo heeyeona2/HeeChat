@@ -17,9 +17,9 @@
 * 채팅방: 
   - 메시지 보내기
    - 꾸미기 기능	
-      > Emoji: 채팅방에 선택한 emoji를 오버레이
-      > Background Effect: 고른 백그라운드 효과를 채팅방에 적용 
-      > Msg Box Animation: 말풍선 애니메이션
+       Emoji: 채팅방에 선택한 emoji를 오버레이
+       Background Effect: 고른 백그라운드 효과를 채팅방에 적용 
+       Msg Box Animation: 말풍선 애니메이션
 
   - 메시지 받기
    - Notification 발생
