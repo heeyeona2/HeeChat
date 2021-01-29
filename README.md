@@ -1,2 +1,2 @@
-# MyMsgApp
+#HeeChat : My Messaging App
  
