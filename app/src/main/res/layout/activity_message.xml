@@ -52,13 +52,19 @@
         android:id="@+id/lottiebackgroubd"
         android:layout_below="@id/bar_layout"
         android:layout_above="@id/bottom"
-        android:visibility="invisible"
         >
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:lottie_fileName="heart_beat.json"
+            app:lottie_loop="false"
+            app:lottie_autoPlay="false"
+            />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/smalllottie"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center"
             app:lottie_loop="false"
             app:lottie_autoPlay="false"
             />

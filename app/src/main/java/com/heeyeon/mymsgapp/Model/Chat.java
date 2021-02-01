@@ -7,6 +7,33 @@ public class Chat {
     private boolean isseen;
     private int effect;
     private int backeffect;
+    private int boxeffect;
+    private boolean effectFlag;
+
+
+
+    public boolean getEffectFlag() {
+        return effectFlag;
+    }
+
+    public void setEffectFlag(boolean effectFlag) {
+        this.effectFlag = effectFlag;
+    }
+
+
+    public Chat(String sender, String receiver, String message, boolean isseen, int effect, boolean effectFlag, int backeffect, int boxeffect) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.isseen = isseen;
+        this.effect = effect;
+        this.backeffect = backeffect;
+        this.boxeffect = boxeffect;
+        this.effectFlag = effectFlag;
+    }
+
+    public Chat(){}
+
 
     public int getEffect() {
         return effect;
@@ -32,20 +59,6 @@ public class Chat {
         this.boxeffect = boxeffect;
     }
 
-    private int boxeffect;
-
-
-    public Chat(String sender, String receiver, String message, boolean isseen, int effect, int backeffect, int boxeffect) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.message = message;
-        this.isseen = isseen;
-        this.effect = effect;
-        this.backeffect = backeffect;
-        this.boxeffect = boxeffect;
-    }
-
-    public Chat(){}
 
     public String getSender() {
         return sender;

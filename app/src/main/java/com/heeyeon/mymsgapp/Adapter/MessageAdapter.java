@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -58,34 +60,70 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
 
         Chat chat = mChat.get(position);
+        int effect = chat.getEffect();
+        int backeffect = chat.getBackeffect();
+        int boxeffect = chat.getBoxeffect();
+        boolean effectFlag = chat.getEffectFlag();
+        int tmp = getItemViewType(position);
+        boolean isRight = false;
+        if(tmp==1) isRight = true;
+
+        holder.playStatus.setVisibility(View.VISIBLE);
+        holder.emoticonView.setVisibility(View.GONE);
+        if(effect==-1&&backeffect==-1&&boxeffect==-1) holder.playStatus.setVisibility(View.GONE);
+        if(effect!=-1 && !effectFlag){//이모티콘
+            holder.playStatus.setVisibility(View.GONE);//굳이 재생버튼 안보여도 되니깐
+            ((MessageActivity) MessageActivity.mContext).putEmoticon(effect,holder.emoticonView);//이모티콘
+        }
+        if(position==mChat.size()-1) {//마지막 읽은 문자의 효과를 재생
+            if(effect!=-1) {
+                if (effectFlag)
+                    ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag());//백그라운드
+                else
+                    ((MessageActivity) MessageActivity.mContext).putEmoticon(effect, holder.emoticonView);//이모티콘
+            }
+            else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false, backeffect,chat.getEffectFlag() );
+            else ((MessageActivity) MessageActivity.mContext).clearBack();
+            ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total,holder.show_message,isRight);
+        }
+
         holder.show_message.setText(chat.getMessage());
+
         if(imageurl.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.default_profile);
         } else {
             Glide.with(mContext).load(imageurl).into(holder.profile_image);
         }
+
         holder.show_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int effect = chat.getEffect();
-                int backeffect = chat.getBackeffect();
-                int boxeffect = chat.getBoxeffect();
-                if(backeffect==-1) ((MessageActivity) MessageActivity.mContext).lottieanim(true,effect);
-                else if(effect==-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false,backeffect);
+                int tmp = getItemViewType(position);
+                boolean isRight = false;
+                if(tmp==1) isRight = true;
+                
+                 if(effect!=-1) {
+                     if (effectFlag)
+                         ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag());//백그라운드
+                     else
+                         ((MessageActivity) MessageActivity.mContext).putEmoticon(effect, holder.emoticonView);//이모티콘
+                 }
+                 else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false,backeffect,chat.getEffectFlag());
+                 if(effect==-1&&backeffect==-1) ((MessageActivity) MessageActivity.mContext).clearBack();
 
-                ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total);
+                 ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total,holder.show_message,isRight);
 
             }
         });
-        if(position == mChat.size()-1){
+
+
             if(chat.isIsseen()){
                 holder.txt_seen.setText("읽음");
             } else{
                 holder.txt_seen.setText("안읽음");
             }
-        } else{
-            holder.txt_seen.setVisibility(View.GONE);
-        }
+
+
     }
 
     @Override
@@ -99,6 +137,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public ImageView profile_image;
         public TextView txt_seen;
         public RelativeLayout total;
+        public ImageView playStatus;
+        public LottieAnimationView emoticonView;
 
     public ViewHolder(@NonNull  View itemView){
             super(itemView);
@@ -106,6 +146,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profile_image=itemView.findViewById(R.id.profile_picture);
             txt_seen = itemView.findViewById(R.id.txt_seen);
             total = itemView.findViewById(R.id.total);
+            playStatus = itemView.findViewById(R.id.playstatus);
+            emoticonView = itemView.findViewById(R.id.emoticon);
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,7 +76,7 @@ public class MessageActivity extends AppCompatActivity {
 
     public static Context mContext;
     static String[] Backgroundlist = new String[]{"burst.json","golden_particle.json","night_background.json","mountain.json","pink_gradient.json","sunrise.json"};
-    static String[] Emojilist = new String[]{"emoji_enamorado.json","emoji_guino.json","emoji_sorprendido.json","emoji_triste.json","email.json","coffee.json","heart_beat.json","thumbup.json"};
+    static String[] Emojilist = new String[]{"emoji_enamorado.json","emoji_guinoo.json","emoji_sorprendido.json","emoji_triste.json","email.json","coffee.json","heart_beat.json","thumbup.json"};
     static HashMap<Integer, Integer> BoxAnim = new HashMap<Integer, Integer>(){
         {
             put(0,R.anim.fadein);
@@ -114,18 +116,22 @@ public class MessageActivity extends AppCompatActivity {
 
     Intent intent;
     ValueEventListener valueEventListener;
-    FrameLayout effectBackground,lottieBackground;
+    FrameLayout effectBackground;
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
     private FloatingActionButton fab, fab1, fab2;
-    LottieAnimationView lottieAnimationView;
+    LottieAnimationView lottieAnimationView,smalllottieAnimationView;
 
     MultiStateToggleButton effectTog;
     RelativeLayout OptionsBar;
     Card selectedEffectCard, selectedBackCard;
     Box selectedBox;
     CardView selectedEffectCardView, selectedBackCardView, selectedBoxCardView;
+
+    Animation ZooomIn;
+    private boolean isLongPressd=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,7 +190,6 @@ public class MessageActivity extends AppCompatActivity {
         LinearLayoutManager boxlinearLayoutManager = new LinearLayoutManager(getApplicationContext());
         boxlinearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         BoxRecyclerView .setLayoutManager(boxlinearLayoutManager);
-        lottieBackground = findViewById(R.id.lottiebackgroubd);
 
         profile_image = findViewById(R.id.profile_picture);
         username = findViewById(R.id.username_msg);
@@ -194,6 +199,7 @@ public class MessageActivity extends AppCompatActivity {
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.lottie);
+        smalllottieAnimationView = (LottieAnimationView) findViewById(R.id.smalllottie);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
@@ -245,6 +251,8 @@ public class MessageActivity extends AppCompatActivity {
         });
         seenMessage(userid);
         setCard1();
+
+        ZooomIn = AnimationUtils.loadAnimation(MessageActivity.this, R.anim.lottiezoom);
     }
 
     public void selectEffectCard(Card card, CardView cardView){
@@ -252,7 +260,10 @@ public class MessageActivity extends AppCompatActivity {
         if(selectedEffectCardView!=null){//전에 선택되었던 것
             selectedEffectCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
         }
-        if(card.getImage()!=0) lottieanim(card.getFlag(),card.getImage()-1);
+        isLongPressd = card.getLongPressed();
+        card.setLongPressed(false);
+
+        lottieanim(card.getFlag(),card.getImage(),isLongPressd);
         selectedEffectCardView = cardView;
         if(selectedBackCardView!=null) selectedBackCard.setImage(-1);
         selectedEffectCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
@@ -263,10 +274,10 @@ public class MessageActivity extends AppCompatActivity {
         if(selectedBackCardView!=null){//전에 선택되었던 것
             selectedBackCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
         }
-        if(card.getImage()!=0)  lottieanim(card.getFlag(),card.getImage()-1);
+        lottieanim(card.getFlag(),card.getImage(),false);
 
         selectedBackCardView = cardView;
-        if(selectedEffectCard!=null) selectedEffectCard.setImage(0);
+        if(selectedEffectCard!=null) selectedEffectCard.setImage(-1);
         selectedBackCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
      }
 
@@ -280,10 +291,11 @@ public class MessageActivity extends AppCompatActivity {
         selectedBoxCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
 
     }
-    public void boxanim(int id, RelativeLayout total){
+    public void boxanim(int id, RelativeLayout total,TextView textView,boolean isRight){
         if(id!=-1) {
             Animation animation= AnimationUtils.loadAnimation(MessageActivity.this, BoxAnim.get(id));
             total.startAnimation(animation);
+            boxgradientEffect(textView,isRight);
         }
     }
     public void boxanim(int id, TextView total){
@@ -292,26 +304,77 @@ public class MessageActivity extends AppCompatActivity {
             total.startAnimation(animation);
         }
     }
-    public void lottieanim(boolean flag, int order) {
-        if(order==-1){
-            lottieBackground.setVisibility(View.INVISIBLE);
-            lottieAnimationView.setVisibility(View.INVISIBLE);
+    public void lottieanim(boolean flag, int order,boolean isLong) {
+
+        if(order<0){
+            if(!flag) {
+                lottieAnimationView.setVisibility(View.INVISIBLE);
+            }
+            else {
+                smalllottieAnimationView.clearAnimation();
+                smalllottieAnimationView.setVisibility(View.INVISIBLE);
+            }
             return;
         }
-        lottieBackground.setVisibility(View.VISIBLE);
-        lottieAnimationView.setVisibility(View.VISIBLE);
         if(flag){
-
-                lottieAnimationView.setAnimation(Emojilist[order]);
+               if(order<Emojilist.length) {
+                   smalllottieAnimationView.setVisibility(View.VISIBLE);
+                   lottieAnimationView.setVisibility(View.INVISIBLE);
+                   if(isLong) {
+                       smalllottieAnimationView.setAnimation(Emojilist[order]);
+                       smalllottieAnimationView.playAnimation();
+                       smalllottieAnimationView.startAnimation(ZooomIn);
+                   }
+                   else {
+                       smalllottieAnimationView.clearAnimation();
+                       smalllottieAnimationView.setAnimation(Emojilist[order]);
+                       smalllottieAnimationView.playAnimation();
+                   }
+               }
 
         } else {
-
-                lottieAnimationView.setAnimation(Backgroundlist[order]);
+            smalllottieAnimationView.clearAnimation();
+            smalllottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.setVisibility(View.VISIBLE);
+            if(order<Backgroundlist.length) lottieAnimationView.setAnimation(Backgroundlist[order]);
+            lottieAnimationView.playAnimation();
         }
-        lottieAnimationView.setRepeatCount(1);
+       // lottieAnimationView.setRepeatCount(0);
+    }
+
+    public void putEmoticon(int order, @NonNull LottieAnimationView lottieAnimationView){
+        if(order<0||order>=Emojilist.length) return;
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        lottieAnimationView.setAnimation(Emojilist[order]);
         lottieAnimationView.playAnimation();
     }
 
+    public void clearBack(){
+        smalllottieAnimationView.clearAnimation();
+        lottieAnimationView.setVisibility(View.INVISIBLE);
+        smalllottieAnimationView.setVisibility(View.INVISIBLE);
+    }
+    private void boxgradientEffect(@NonNull TextView textView,boolean isRight){
+        Handler mHandler = new Handler();
+        Runnable mMyTask = new Runnable() {
+            @Override
+            public void run() {
+                // 원래대로 돌아오기
+                if(isRight) textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_right));
+                else textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_left));
+            }
+        };
+
+        mHandler.postDelayed(mMyTask, 5000); // 5초후에 실행
+        textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.gradient_animation));
+        AnimationDrawable animDrawable =  (AnimationDrawable) textView.getBackground();
+        animDrawable.setEnterFadeDuration(10);
+        animDrawable.setExitFadeDuration(1200);
+//        animDrawable.setTint(getColor(R.color.colorPrimary));
+//        animDrawable.setTintMode(PorterDuff.Mode.OVERLAY);
+        animDrawable.setOneShot(true);
+        animDrawable.start();
+    }
 
     private void backgroundEffect(){//백그라운드 그라이데이션 커스텀
         Handler mHandler = new Handler();
@@ -322,7 +385,6 @@ public class MessageActivity extends AppCompatActivity {
             public void run() {
                 // 실제 동작
                 effectBackground.setVisibility(View.INVISIBLE);
-
             }
         };
 
@@ -331,8 +393,8 @@ public class MessageActivity extends AppCompatActivity {
         AnimationDrawable animDrawable =  (AnimationDrawable) effectBackground.getBackground();
         animDrawable.setEnterFadeDuration(10);
         animDrawable.setExitFadeDuration(1200);
-        animDrawable.setTint(getColor(R.color.colorPrimary));
-        animDrawable.setTintMode(PorterDuff.Mode.OVERLAY);
+//        animDrawable.setTint(getColor(R.color.colorPrimary));
+//        animDrawable.setTintMode(PorterDuff.Mode.OVERLAY);
         animDrawable.setOneShot(true);
         animDrawable.start();
     }
@@ -365,11 +427,17 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
         hashMap.put("isseen",false);
-        if(selectedEffectCard==null) hashMap.put("effect",-1);
-        else  hashMap.put("effect",selectedEffectCard.getImage()-1);
+        if(selectedEffectCard==null) {
+            hashMap.put("effect",-1);
+            hashMap.put("effectFlag", false);
+        }
+        else {
+            hashMap.put("effect", selectedEffectCard.getImage());
+            hashMap.put("effectFlag", isLongPressd);
+        }
 
         if(selectedBackCard==null) hashMap.put("backeffect",-1);
-        else  hashMap.put("backeffect",selectedBackCard.getImage()-1);
+        else  hashMap.put("backeffect",selectedBackCard.getImage());
 
         if(selectedBox==null) hashMap.put("boxeffect",-1);
         else hashMap.put("boxeffect",selectedBox.getId());
@@ -419,7 +487,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher,username+": "+msg,"새로운 메시지",
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher_round,username+": "+msg,"새로운 메시지",
                             userid);
                     Sender sender = new Sender(data, token.getToken());
                     apiService.sendNotification(sender)
@@ -450,6 +518,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void setCard1(){
         mCard = new ArrayList<>();
+        mCard.add(new Card(true,-1));
         mCard.add(new Card(true,0));
         mCard.add(new Card(true,1));
         mCard.add(new Card(true,2));
@@ -458,15 +527,14 @@ public class MessageActivity extends AppCompatActivity {
         mCard.add(new Card(true,5));
         mCard.add(new Card(true,6));
         mCard.add(new Card(true,7));
-        mCard.add(new Card(true,8));
         mCard2 = new ArrayList<>();
+        mCard2.add(new Card(false,-1));
         mCard2.add(new Card(false,0));
         mCard2.add(new Card(false,1));
         mCard2.add(new Card(false,2));
         mCard2.add(new Card(false,3));
         mCard2.add(new Card(false,4));
         mCard2.add(new Card(false,5));
-        mCard2.add(new Card(false,6));
 
         cardAdapter = new CardAdapter(MessageActivity.this, mCard);
         recyclerCardView1.setAdapter(cardAdapter);
@@ -507,13 +575,7 @@ public class MessageActivity extends AppCompatActivity {
                     messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageurl);
                     recyclerView.setAdapter(messageAdapter);
                 }
-                if(mChat.size()>0) {
-                    int effect = mChat.get(mChat.size() - 1).getEffect();
-                    int backeffect = mChat.get(mChat.size() - 1).getBackeffect();
-                    int boxeffect = mChat.get(mChat.size() - 1).getBoxeffect();
-                    if (effect != -1) lottieanim(true, effect );
-                    if (backeffect != -1) lottieanim(false, backeffect );
-                }
+
 
             }
 
@@ -546,12 +608,10 @@ public class MessageActivity extends AppCompatActivity {
                     BoxRecyclerView.setVisibility(View.VISIBLE);
                     recyclerCardView1.setVisibility(View.INVISIBLE);
                     recyclerCardView2.setVisibility(View.INVISIBLE);
-                    lottieBackground.setVisibility(View.INVISIBLE);
 
                     break;
                 case R.id.fab2:
                     //anim();
-                    lottieBackground.setVisibility(View.VISIBLE);
                     recyclerCardView1.setVisibility(View.VISIBLE);
                     recyclerCardView2.setVisibility(View.INVISIBLE);
                     effectTog.setVisibility(View.VISIBLE);
@@ -576,8 +636,7 @@ public class MessageActivity extends AppCompatActivity {
             fab.setImageResource(R.drawable.magic_wand);
             OptionsBar.setVisibility(View.INVISIBLE);
             BoxRecyclerView.setVisibility(View.INVISIBLE);
-            lottieBackground.setVisibility(View.INVISIBLE);
-
+            clearBack();
         } else {
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
@@ -592,7 +651,6 @@ public class MessageActivity extends AppCompatActivity {
             recyclerCardView1.setVisibility(View.VISIBLE);
             recyclerCardView2.setVisibility(View.INVISIBLE);
             BoxRecyclerView.setVisibility(View.INVISIBLE);
-            lottieBackground.setVisibility(View.VISIBLE);
 
             effectTog.setValue(0);
         }

@@ -3,10 +3,21 @@ package com.heeyeon.mymsgapp.Model;
 public class Card {
     boolean flag;
     int Image;
+    boolean LongPressed;
+
+    public boolean getLongPressed() {
+        return LongPressed;
+    }
+
+    public void setLongPressed(boolean longPressed) {
+        LongPressed = longPressed;
+    }
+
 
     public Card(boolean flag, int image) {
         this.flag = flag;
-        Image = image;
+        this.Image = image;
+        this.LongPressed =false;
     }
 
     public boolean getFlag() {

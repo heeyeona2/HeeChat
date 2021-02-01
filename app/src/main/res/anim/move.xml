@@ -5,7 +5,12 @@
     android:fillAfter="false">
 
     <translate
-        android:fromXDelta="100%p"
-        android:toXDelta="50%p"
-        android:duration="800" />
+        android:pivotX="100%"
+        android:pivotY="50%"
+        android:fromXDelta="0%"
+        android:toXDelta="-90%"
+        android:duration="2000"
+        android:repeatCount="1"
+        android:repeatMode="reverse"
+        />
 </set>

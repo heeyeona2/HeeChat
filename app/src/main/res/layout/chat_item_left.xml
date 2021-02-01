@@ -29,7 +29,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txt_seen"
+        android:layout_toRightOf="@id/show_msg"
+        android:visibility="gone"
+        android:textSize="8sp"
+        android:layout_alignBottom="@id/show_msg"
+        android:layout_marginLeft="3dp"
+        android:text="읽음"
+
+        />
+    <ImageView
+        android:id="@+id/playstatus"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
         android:layout_below="@id/show_msg"
+        android:layout_alignStart="@id/show_msg"
+        android:layout_alignLeft="@id/show_msg"
+        android:layout_marginTop="0.5dp"
+        android:src="@mipmap/playstatus" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:id="@+id/emoticon"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_alignStart="@id/show_msg"
+        android:layout_below="@id/show_msg"
+        android:layout_marginTop="10dp"
         android:visibility="gone"/>
 
 </RelativeLayout>

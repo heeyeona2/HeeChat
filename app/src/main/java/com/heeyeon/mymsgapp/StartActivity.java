@@ -32,8 +32,6 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-
-
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
 
