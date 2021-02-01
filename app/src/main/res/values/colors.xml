@@ -18,15 +18,20 @@
     <color name="colorGradientCenter">#F67831</color>
     <color name="colorGradientEnd">#FF1493</color>
 
-    <color name="color1">#00BCD4</color>
-    <color name="color2">#FF9800</color>
-    <color name="color3">#FF1493</color>
-    <color name="color4">#7989E4</color>
-    <color name="color5">#FF1493</color>
-    <color name="color6">#FF1493</color>
-
-
-
+    <color name="color1">#ffab91</color>
+    <color name="color2">#F48FB1</color>
+    <color name="color3">#ce93d8</color>
+    <color name="color4">#b39ddb</color>
+    <color name="color5">#9fa8da</color>
+    <color name="color7">#81d4fa</color>
+    <color name="color8">#80deea</color>
+    <color name="color9">#c5e1a5</color>
+    <color name="color10">#e6ee9c</color>
+    <color name="color11">#fff59d</color>
+    <color name="color12">#ffe082</color>
+    <color name="color13">#ffcc80</color>
+    <color name="color14">#ffe082</color>
+    <color name="color15">#bcaaa4</color>
 
 
 </resources>

@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import petrov.kristiyan.colorpicker.ColorPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,6 +92,10 @@ public class MessageActivity extends AppCompatActivity {
 
         }
     };
+    static int[] ColorResID = new int[]{
+            R.color.color1, R.color.color2,R.color.color3,R.color.color4,R.color.color5,R.color.color6,R.color.color7,R.color.color8,R.color.color9,R.color.color10,R.color.color11,R.color.color12,R.color.color13,R.color.color14,R.color.color15
+    };
+    ArrayList<String> colors;
     CircleImageView profile_image;
     TextView username;
     String userid;
@@ -120,7 +125,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab, fab1, fab2;
+    private FloatingActionButton fab, fab1, fab2,fab3;
     LottieAnimationView lottieAnimationView,smalllottieAnimationView;
 
     MultiStateToggleButton effectTog;
@@ -128,6 +133,7 @@ public class MessageActivity extends AppCompatActivity {
     Card selectedEffectCard, selectedBackCard;
     Box selectedBox;
     CardView selectedEffectCardView, selectedBackCardView, selectedBoxCardView;
+    int selectedColor=R.color.colorPrimary;
 
     Animation ZooomIn;
     private boolean isLongPressd=false;
@@ -204,10 +210,12 @@ public class MessageActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton) findViewById(R.id.fab3);
 
         fab.setOnClickListener(btnClickListener);
         fab1.setOnClickListener(btnClickListener);
         fab2.setOnClickListener(btnClickListener);
+        fab3.setOnClickListener(btnClickListener);
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
@@ -253,6 +261,25 @@ public class MessageActivity extends AppCompatActivity {
         setCard1();
 
         ZooomIn = AnimationUtils.loadAnimation(MessageActivity.this, R.anim.lottiezoom);
+
+        colors = new ArrayList<>();  // Color 넣어줄 list
+
+        colors.add("#ffab91");
+        colors.add("#F48FB1");
+        colors.add("#ce93d8");
+        colors.add("#b39ddb");
+        colors.add("#9fa8da");
+        colors.add("#90caf9");
+        colors.add("#81d4fa");
+        colors.add("#80deea");
+        colors.add("#80cbc4");
+        colors.add("#c5e1a5");
+        colors.add("#e6ee9c");
+        colors.add("#fff59d");
+        colors.add("#ffe082");
+        colors.add("#ffcc80");
+        colors.add("#bcaaa4");
+
     }
 
     public void selectEffectCard(Card card, CardView cardView){
@@ -358,11 +385,13 @@ public class MessageActivity extends AppCompatActivity {
     private void boxgradientEffect(@NonNull TextView textView,boolean isRight){
         Handler mHandler = new Handler();
         Runnable mMyTask = new Runnable() {
+            Drawable original = textView.getBackground();
             @Override
             public void run() {
                 // 원래대로 돌아오기
-                if(isRight) textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_right));
-                else textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_left));
+                textView.setBackground(original);
+//                if(isRight) textView.setBackground(original);
+//                else textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_left));
             }
         };
 
@@ -428,6 +457,8 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
         hashMap.put("isseen",false);
+        hashMap.put("boxColor",selectedColor);
+
         if(selectedEffectCard==null) {
             hashMap.put("effect",-1);
             hashMap.put("effectFlag", false);
@@ -619,8 +650,10 @@ public class MessageActivity extends AppCompatActivity {
                     BoxRecyclerView.setVisibility(View.INVISIBLE);
 
                     effectTog.setValue(0);
+                    break;
+                case R.id.fab3:
 
-
+                    openColorPicker();
                     break;
             }
         }
@@ -631,8 +664,11 @@ public class MessageActivity extends AppCompatActivity {
         if (isFabOpen) {
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
+            fab3.startAnimation(fab_close);
+
             fab1.setClickable(false);
             fab2.setClickable(false);
+            fab3.setClickable(false);
             isFabOpen = false;
             fab.setImageResource(R.drawable.magic_wand);
             OptionsBar.setVisibility(View.INVISIBLE);
@@ -641,8 +677,12 @@ public class MessageActivity extends AppCompatActivity {
         } else {
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+
             fab1.setClickable(true);
             fab2.setClickable(true);
+            fab3.setClickable(true);
+
             isFabOpen = true;
             fab.setImageResource(R.drawable.x);
 
@@ -656,6 +696,27 @@ public class MessageActivity extends AppCompatActivity {
             effectTog.setValue(0);
         }
     }
+    public void openColorPicker() {
+        final ColorPicker colorPicker = new ColorPicker(this);  // ColorPicker 객체 생성
+
+        colorPicker.setColors(colors)  // 만들어둔 list 적용
+                .setColumns(5)  // 5열로 설정
+                .setRoundColorButton(true)  // 원형 버튼으로 설정
+                .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+                    @Override
+                    public void onChooseColor(int position, int color) {
+                        if(position<0||position>=colors.size()) return;
+                        selectedColor=position;//[position];
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Cancel 버튼 클릭 시 이벤트
+                    }
+                }).show();  // dialog 생성
+    }
+
 
     @Override
     protected void onResume() {

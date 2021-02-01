@@ -2,6 +2,10 @@ package com.heeyeon.mymsgapp.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -35,7 +40,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String imageurl;
 
     FirebaseUser firebaseUser;
-
+    String[] colorList = new String[]{
+            "#ffab91","#F48FB1", "#ce93d8", "#b39ddb", "#9fa8da", "#90caf9", "#81d4fa", "#80deea","#80cbc4", "#c5e1a5",
+            "#e6ee9c","#fff59d","#ffe082","#ffcc80","#bcaaa4"};
     public MessageAdapter(Context context, ArrayList<Chat> chatArrayList,String imageurl) {
         this.mContext = context;
         this.mChat = chatArrayList;
@@ -64,9 +71,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         int backeffect = chat.getBackeffect();
         int boxeffect = chat.getBoxeffect();
         boolean effectFlag = chat.getEffectFlag();
+        int boxColor = chat.getBoxColor();
+
         int tmp = getItemViewType(position);
         boolean isRight = false;
         if(tmp==1) isRight = true;
+
+        holder.show_message.getBackground().setColorFilter(Color.parseColor(colorList[boxColor]), PorterDuff.Mode.SRC_IN);
 
         holder.playStatus.setVisibility(View.VISIBLE);
         holder.emoticonView.setVisibility(View.GONE);

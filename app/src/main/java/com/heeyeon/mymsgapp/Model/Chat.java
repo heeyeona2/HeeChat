@@ -9,8 +9,15 @@ public class Chat {
     private int backeffect;
     private int boxeffect;
     private boolean effectFlag;
+    private int boxColor;
 
+    public int getBoxColor() {
+        return boxColor;
+    }
 
+    public void setBoxColor(int boxColor) {
+        this.boxColor = boxColor;
+    }
 
     public boolean getEffectFlag() {
         return effectFlag;
@@ -21,7 +28,7 @@ public class Chat {
     }
 
 
-    public Chat(String sender, String receiver, String message, boolean isseen, int effect, boolean effectFlag, int backeffect, int boxeffect) {
+    public Chat(String sender, String receiver, String message, boolean isseen, int effect, boolean effectFlag, int backeffect, int boxeffect,int boxColor) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
@@ -30,6 +37,7 @@ public class Chat {
         this.backeffect = backeffect;
         this.boxeffect = boxeffect;
         this.effectFlag = effectFlag;
+        this.boxColor = boxColor;
     }
 
     public Chat(){}
