@@ -7,7 +7,7 @@
     <item android:duration="1800"
         android:drawable="@drawable/gradient_center"/>
 
-    <item android:duration="400"
+    <item android:duration="1800"
         android:drawable="@drawable/gradient_end"/>
 
 </animation-list>

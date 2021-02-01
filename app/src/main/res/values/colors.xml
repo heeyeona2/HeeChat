@@ -17,4 +17,16 @@
     <color name="colorGradientStart">#D9FF43</color>
     <color name="colorGradientCenter">#F67831</color>
     <color name="colorGradientEnd">#FF1493</color>
+
+    <color name="color1">#00BCD4</color>
+    <color name="color2">#FF9800</color>
+    <color name="color3">#FF1493</color>
+    <color name="color4">#7989E4</color>
+    <color name="color5">#FF1493</color>
+    <color name="color6">#FF1493</color>
+
+
+
+
+
 </resources>

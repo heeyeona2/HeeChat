@@ -263,7 +263,7 @@ public class MessageActivity extends AppCompatActivity {
         isLongPressd = card.getLongPressed();
         card.setLongPressed(false);
 
-        lottieanim(card.getFlag(),card.getImage(),isLongPressd);
+        lottieanim(card.getFlag(),card.getImage(),isLongPressd,null,true);
         selectedEffectCardView = cardView;
         if(selectedBackCardView!=null) selectedBackCard.setImage(-1);
         selectedEffectCardView.setCardBackgroundColor(mContext.getColor(R.color.colorPrimary));
@@ -274,7 +274,7 @@ public class MessageActivity extends AppCompatActivity {
         if(selectedBackCardView!=null){//전에 선택되었던 것
             selectedBackCardView.setCardBackgroundColor(mContext.getColor(R.color.white));
         }
-        lottieanim(card.getFlag(),card.getImage(),false);
+        lottieanim(card.getFlag(),card.getImage(),false,null,true);
 
         selectedBackCardView = cardView;
         if(selectedEffectCard!=null) selectedEffectCard.setImage(-1);
@@ -304,7 +304,7 @@ public class MessageActivity extends AppCompatActivity {
             total.startAnimation(animation);
         }
     }
-    public void lottieanim(boolean flag, int order,boolean isLong) {
+    public void lottieanim(boolean flag, int order,boolean isLong,TextView textView, boolean isRight) {
 
         if(order<0){
             if(!flag) {
@@ -316,6 +316,7 @@ public class MessageActivity extends AppCompatActivity {
             }
             return;
         }
+        if(textView!=null) boxgradientEffect(textView,isRight);
         if(flag){
                if(order<Emojilist.length) {
                    smalllottieAnimationView.setVisibility(View.VISIBLE);
@@ -365,11 +366,11 @@ public class MessageActivity extends AppCompatActivity {
             }
         };
 
-        mHandler.postDelayed(mMyTask, 5000); // 5초후에 실행
+        mHandler.postDelayed(mMyTask, 6000); // 5초후에 실행
         textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.gradient_animation));
         AnimationDrawable animDrawable =  (AnimationDrawable) textView.getBackground();
-        animDrawable.setEnterFadeDuration(10);
-        animDrawable.setExitFadeDuration(1200);
+        animDrawable.setEnterFadeDuration(800);
+        animDrawable.setExitFadeDuration(1000);
 //        animDrawable.setTint(getColor(R.color.colorPrimary));
 //        animDrawable.setTintMode(PorterDuff.Mode.OVERLAY);
         animDrawable.setOneShot(true);

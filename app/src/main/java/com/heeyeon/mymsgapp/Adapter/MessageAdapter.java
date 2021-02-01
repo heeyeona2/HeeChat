@@ -78,11 +78,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         if(position==mChat.size()-1) {//마지막 읽은 문자의 효과를 재생
             if(effect!=-1) {
                 if (effectFlag)
-                    ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag());//백그라운드
+                    ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag(),holder.show_message,isRight);//백그라운드
                 else
                     ((MessageActivity) MessageActivity.mContext).putEmoticon(effect, holder.emoticonView);//이모티콘
             }
-            else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false, backeffect,chat.getEffectFlag() );
+            else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false, backeffect,chat.getEffectFlag(),holder.show_message,isRight );
             else ((MessageActivity) MessageActivity.mContext).clearBack();
             ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total,holder.show_message,isRight);
         }
@@ -101,14 +101,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 int tmp = getItemViewType(position);
                 boolean isRight = false;
                 if(tmp==1) isRight = true;
-                
+
                  if(effect!=-1) {
                      if (effectFlag)
-                         ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag());//백그라운드
+                         ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag(),holder.show_message,isRight);//백그라운드
                      else
                          ((MessageActivity) MessageActivity.mContext).putEmoticon(effect, holder.emoticonView);//이모티콘
                  }
-                 else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false,backeffect,chat.getEffectFlag());
+                 else if (backeffect!=-1) ((MessageActivity) MessageActivity.mContext).lottieanim(false,backeffect,chat.getEffectFlag(),holder.show_message,isRight);
                  if(effect==-1&&backeffect==-1) ((MessageActivity) MessageActivity.mContext).clearBack();
 
                  ((MessageActivity) MessageActivity.mContext).boxanim(boxeffect,holder.total,holder.show_message,isRight);
