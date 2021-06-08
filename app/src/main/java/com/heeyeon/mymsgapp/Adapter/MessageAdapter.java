@@ -86,7 +86,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.playStatus.setVisibility(View.GONE);//굳이 재생버튼 안보여도 되니깐
             ((MessageActivity) MessageActivity.mContext).putEmoticon(effect,holder.emoticonView);//이모티콘
         }
-        if(position==mChat.size()-1) {//마지막 읽은 문자의 효과를 재생
+        if(position==mChat.size()-1) {//마지막 읽은 문자의 효과를 재생position==mChat.size()-1
             if(effect!=-1) {
                 if (effectFlag)
                     ((MessageActivity) MessageActivity.mContext).lottieanim(true, effect, chat.getEffectFlag(),holder.show_message,isRight);//백그라운드

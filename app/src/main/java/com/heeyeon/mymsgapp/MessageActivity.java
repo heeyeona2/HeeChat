@@ -133,7 +133,7 @@ public class MessageActivity extends AppCompatActivity {
     Card selectedEffectCard, selectedBackCard;
     Box selectedBox;
     CardView selectedEffectCardView, selectedBackCardView, selectedBoxCardView;
-    int selectedColor=R.color.colorPrimary;
+    int selectedColor=0;
 
     Animation ZooomIn;
     private boolean isLongPressd=false;
@@ -384,19 +384,22 @@ public class MessageActivity extends AppCompatActivity {
     }
     private void boxgradientEffect(@NonNull TextView textView,boolean isRight){
         Handler mHandler = new Handler();
+        Drawable original = textView.getBackground();
         Runnable mMyTask = new Runnable() {
-            Drawable original = textView.getBackground();
-            @Override
+             @Override
             public void run() {
                 // 원래대로 돌아오기
-                textView.setBackground(original);
+               // textView.setBackground(original);
+                if(isRight) textView.setBackgroundResource(R.drawable.background_right);
+                else textView.setBackgroundResource(R.drawable.background_left);
 //                if(isRight) textView.setBackground(original);
 //                else textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.background_left));
             }
         };
 
-        mHandler.postDelayed(mMyTask, 6000); // 5초후에 실행
-        textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.gradient_animation));
+        mHandler.postDelayed(mMyTask, 4000); // 5초후에 실행
+        if(isRight) textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.gradient_animation));
+        else  textView.setBackground(ContextCompat.getDrawable(mContext,R.drawable.keft_gradient_animation));
         AnimationDrawable animDrawable =  (AnimationDrawable) textView.getBackground();
         animDrawable.setEnterFadeDuration(800);
         animDrawable.setExitFadeDuration(1000);
@@ -608,7 +611,7 @@ public class MessageActivity extends AppCompatActivity {
                     recyclerView.setAdapter(messageAdapter);
                 }
 
-
+                recyclerView.scrollToPosition(mChat.size());
             }
 
             @Override
